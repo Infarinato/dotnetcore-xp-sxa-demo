@@ -1,7 +1,7 @@
-using Microsoft.AspNetCore.Localization;
-using Sitecore.AspNetCore.SDK.ExperienceEditor.Extensions;
 using System.Globalization;
 using aspnet_core_demodotcomsite.Extensions;
+using Microsoft.AspNetCore.Localization;
+using Sitecore.AspNetCore.SDK.ExperienceEditor.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
