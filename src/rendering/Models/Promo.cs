@@ -5,7 +5,7 @@ namespace aspnet_core_demodotcomsite.Models;
 
 public class Promo : BaseModel
 {
-    public const string VARIANT_WITH_TEXT = "WithText";
+    public const string VariantWithText = "WithText";
 
     [SitecoreComponentField]
     public ImageField? PromoIcon { get; set; }

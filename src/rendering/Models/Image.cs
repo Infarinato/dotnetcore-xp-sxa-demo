@@ -5,7 +5,7 @@ namespace aspnet_core_demodotcomsite.Models;
 
 public class Image : BaseModel
 {
-    public const string VARIANT_BANNER = "Banner";
+    public const string VariantBanner = "Banner";
 
     [SitecoreComponentField]
     public HyperLinkField? TargetUrl { get; set; }

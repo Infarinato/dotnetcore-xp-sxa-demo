@@ -1,5 +1,5 @@
-﻿using Sitecore.AspNetCore.SDK.RenderingEngine.Binding.Attributes;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
+using Sitecore.AspNetCore.SDK.RenderingEngine.Binding.Attributes;
 
 namespace aspnet_core_demodotcomsite.Models;
 
@@ -15,9 +15,9 @@ public partial class Container : BaseModel
     { 
         get
         {
-            if (!string.IsNullOrEmpty(BackgroundImage) && MediaUrlPattern().IsMatch(BackgroundImage))
+            if (!string.IsNullOrEmpty(this.BackgroundImage) && MediaUrlPattern().IsMatch(this.BackgroundImage))
             {
-                string mediaUrl = MediaUrlPattern().Match(BackgroundImage).Groups[1].Value;
+                var mediaUrl = MediaUrlPattern().Match(this.BackgroundImage).Groups[1].Value;
                 return $"backgroundImage: url('{mediaUrl}')";
             }
 
@@ -29,7 +29,7 @@ public partial class Container : BaseModel
     {
         get
         {
-            return Styles?.Split(' ').Any(x => x == "container") == true;
+            return this.Styles?.Split(' ').Any(x => x == "container") == true;
         }
     }
 }

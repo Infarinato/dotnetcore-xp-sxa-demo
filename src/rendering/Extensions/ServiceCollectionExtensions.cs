@@ -1,7 +1,7 @@
-﻿using Sitecore.AspNetCore.SDK.RenderingEngine.Configuration;
-using aspnet_core_demodotcomsite.Models.LinkList;
+﻿using aspnet_core_demodotcomsite.Models.LinkList;
 using aspnet_core_demodotcomsite.Models.Navigation;
 using aspnet_core_demodotcomsite.Models.Title;
+using Sitecore.AspNetCore.SDK.RenderingEngine.Configuration;
 
 namespace aspnet_core_demodotcomsite.Extensions
 {

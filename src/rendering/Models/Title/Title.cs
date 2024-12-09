@@ -9,33 +9,15 @@ public class Title : BaseModel
     [SitecoreComponentField(Name = "data")]            
     public TitleData? Data { get; set; }
 
-    public HyperLinkField Link 
-    { 
-        get 
-        {
-            return new HyperLinkField(
-                    new HyperLink
-                    {
-                        Anchor = TitleLocation?.Url?.Path,
-                        Title = TitleLocation?.Field?.JsonValue?.Value
-                    });
-        }
-    }
+    public HyperLinkField Link =>
+        new(
+            new HyperLink
+                {
+                    Anchor = this.TitleLocation?.Url?.Path,
+                    Title = this.TitleLocation?.Field?.JsonValue?.Value
+                });
 
-    public TextField Text
-    {
-        get
-        {   
-            return new TextField(TitleLocation?.Field?.JsonValue?.Value ?? string.Empty);
-        }
-    }
+    public TextField Text => new(this.TitleLocation?.Field?.JsonValue?.Value ?? string.Empty);
 
-
-    public TitleLocation? TitleLocation
-    {
-        get
-        {
-            return Data?.DataSource ?? Data?.ContextItem;                
-        }
-    }
+    public TitleLocation? TitleLocation => this.Data?.DataSource ?? this.Data?.ContextItem;
 }

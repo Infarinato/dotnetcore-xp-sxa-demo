@@ -2,9 +2,9 @@
 @model aspnet_core_demodotcomsite.Models.Navigation.Navigation
 
 <ul class="clearfix">
-    @foreach (NavigationItem navItem in @Model.NavigationItems ?? [])
+    @foreach (var navItem in Model.NavigationItems ?? [])
     {
-        string classNames = $"{string.Join(" ", navItem.Styles ?? [])} rel-level{Model.MenuLevel}";
+        var classNames = $"{string.Join(" ", navItem.Styles ?? [])} rel-level{Model.MenuLevel}";
 
         <li class="@classNames">
             <div class="navigation-title @(navItem.Children?.Count > 0 ? "child" : "")">

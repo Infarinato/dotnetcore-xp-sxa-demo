@@ -1,10 +1,10 @@
 ﻿@model aspnet_core_demodotcomsite.Models.ColumnSplitter
 
 <div class="row component column-splitter @Model.Styles @Model.GridParameters" id="@Model.Id">
-    @foreach (int enabledParameterId in Model.EnabledPlaceholderIds)
+    @foreach (var enabledParameterId in Model.EnabledPlaceholderIds)
     {
-        string key = $"column-{enabledParameterId}-{{*}}";
-        string styles = $"{Model.ColumnWidths[enabledParameterId - 1]} {Model.ColumnStyles[enabledParameterId - 1]}";
+        var key = $"column-{enabledParameterId}-{{*}}";
+        var styles = $"{Model.ColumnWidths[enabledParameterId - 1]} {Model.ColumnStyles[enabledParameterId - 1]}";
 
         <div class="@styles">
             <div class="row">
