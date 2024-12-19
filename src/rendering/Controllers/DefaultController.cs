@@ -39,10 +39,35 @@ public class DefaultController : Controller
         }
         else
         {
+            model = GetLayout(model, request);
             result = this.View(model);
         }
-                
+
         return result;
+    }
+
+    private static Layout GetLayout(Layout model, ISitecoreRenderingContext? request)
+    {
+        if (!string.IsNullOrWhiteSpace(model.ItemId))
+        {
+            return model;
+        }
+
+        var route = request?.Response?.Content?.Sitecore?.Route;
+        if (route == null)
+        {
+            return model;
+        }
+
+        return new Layout
+        {
+            DisplayName = string.IsNullOrWhiteSpace(route.DisplayName) ? route.Name : route.DisplayName,
+            ItemId = route.ItemId,
+            ItemLanguage = route.ItemLanguage,
+            Name = route.Name,
+            TemplateId = route.TemplateId,
+            TemplateName = route.TemplateName
+        };
     }
 
     public IActionResult Error()
