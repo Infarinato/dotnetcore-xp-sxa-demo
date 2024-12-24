@@ -24,5 +24,5 @@ public abstract class BaseModel
     public string? Styles { get; set; }
 
     [SitecoreComponentParameter]
-    public int DynamicPlaceholderId { get; set; } = 1;        
+    public int DynamicPlaceholderId { get; set; } = 1;
 }

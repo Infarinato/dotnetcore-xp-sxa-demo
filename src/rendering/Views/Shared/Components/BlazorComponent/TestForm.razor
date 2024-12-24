@@ -1,0 +1,71 @@
+﻿@using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields
+@using System.ComponentModel.DataAnnotations
+
+<PageTitle>Test Form</PageTitle>
+
+<h1>Test Form</h1>
+@if (this.SubmittedDate != null && !string.IsNullOrWhiteSpace(this.SubmittedEntry))
+{
+    <h4>@SitecoreModel?.SubmittedDateHeading?.Value: @SubmittedDate?.ToString("dd/MM/yyyy")</h4>
+    <h4>@SitecoreModel?.SubmittedEntryHeading?.Value: @SubmittedEntry</h4>
+}
+
+<EditForm Model="Model" OnValidSubmit="SubmitValidForm" Enhance>
+    <DataAnnotationsValidator />
+    <Wizard Id="TestForm">
+        <WizardStep Name="First Step" NamesOfFieldsToValidate="@(new []{ "Date" })">
+            <div class="form-group">
+                <label>@SitecoreModel?.DateLabel?.Value:</label>
+                <div>
+                    <InputDate @bind-Value="@Model!.Date" class="form-control" />
+                </div>
+                <ValidationMessage For="@(() => Model.Date)" />
+            </div>
+        </WizardStep>
+        <WizardStep Name="Final Step">
+            <div class="form-group">
+                <label>@SitecoreModel?.EntryLabel?.Value:</label>
+                <div>
+                    <InputTextArea @bind-Value="@Model!.Entry" class="form-control" rows="8" />
+                </div>
+                <ValidationMessage For="@(() => Model.Entry)" />
+            </div>
+        </WizardStep>
+    </Wizard>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Models.TestForm? SitecoreModel { get; set; } = new()
+        {
+            DateLabel = new TextField { Value = "Date" },
+            EntryLabel = new TextField { Value = "Entry" },
+            SubmittedDateHeading = new TextField { Value = "Submitted date" },
+            SubmittedEntryHeading = new TextField { Value = "Submitted entry" }
+        };
+
+    [SupplyParameterFromForm]
+    private TestFormModel? Model { get; set; }
+
+    public string? SubmittedEntry = string.Empty;
+
+    public DateTime? SubmittedDate;
+
+    protected override void OnInitialized() => this.Model ??= new TestFormModel();
+
+    private void SubmitValidForm()
+    {
+        this.SubmittedDate = this.Model?.Date;
+        this.SubmittedEntry = this.Model?.Entry;
+    }
+
+    public class TestFormModel
+    {
+        [Required]
+        [StringLength(40, ErrorMessage = "Entry is too long.")]
+        public string? Entry { get; set; }
+
+        [Required]
+        public DateTime? Date { get; set; }
+    }
+} 

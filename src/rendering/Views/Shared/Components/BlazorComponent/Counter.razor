@@ -1,0 +1,23 @@
+﻿@using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields
+<h1>@SitecoreModel?.Heading?.Value</h1>
+
+<p>@SitecoreModel?.CurrentCountLabel?.Value: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">@SitecoreModel?.SubmitButtonLabel?.Value</button>
+
+@code {
+    [Parameter]
+    public Models.Counter? SitecoreModel { get; set; } = new()
+        {
+            CurrentCountLabel = new TextField { Value = "Current count" },
+            Heading = new TextField { Value = "Counter" },
+            SubmitButtonLabel = new TextField { Value = "Click me" }
+        };
+
+    private int currentCount;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

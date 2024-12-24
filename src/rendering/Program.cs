@@ -24,6 +24,8 @@ builder.Services.AddSitecoreRenderingEngine(options =>
                 .ForwardHeaders()
                 .WithExperienceEditor(options => { options.JssEditingSecret = sitecoreSettings.EditingSecret ?? string.Empty; });
 
+builder.Services.AddServerSideBlazor();
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -61,6 +63,7 @@ app.MapControllerRoute(
         new { controller = "Default", action = "Error" }
     );
 
+app.MapBlazorHub();
 app.MapSitecoreLocalizedRoute("sitecore", "Index", "Default");
 app.MapFallbackToController("Index", "Default");
 

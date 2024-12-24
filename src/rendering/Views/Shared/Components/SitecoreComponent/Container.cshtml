@@ -1,4 +1,5 @@
-﻿@model aspnet_core_demodotcomsite.Models.Container
+﻿@using aspnet_core_demodotcomsite.Views.Shared.Components.BlazorComponent
+@model aspnet_core_demodotcomsite.Models.Container
 
 @if (Model.OutputContainerWrapper)
 {
@@ -17,3 +18,11 @@
 {
     @Html.Raw("</div>")
 }
+
+<div class="component container-default @Model.GridParameters @Model.Styles" style="@Model.BackgroundStyle" id="@Model.Id">
+    <div class="component-content">
+        <div class="row">
+            <component type="typeof(Weather)" render-mode="Static" />
+        </div>
+    </div>
+</div>

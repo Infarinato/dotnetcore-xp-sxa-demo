@@ -20,7 +20,9 @@ namespace aspnet_core_demodotcomsite.Extensions
                                   .AddModelBoundView<Image>("Image")
                                   .AddModelBoundView<PartialDesignDynamicPlaceholder>("PartialDesignDynamicPlaceholder")
                                   .AddModelBoundView<Navigation>("Navigation")
-                                  .AddModelBoundView<RssFeed>("RssFeed");
+                                  .AddModelBoundView<RssFeed>("RssFeed")
+                                  .AddModelBoundView<Counter>("Counter")
+                                  .AddModelBoundView<TestForm>("TestForm");
 
             return renderingEngineOptions;
         }
