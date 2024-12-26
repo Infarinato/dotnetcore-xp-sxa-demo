@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Sitecore.AspNetCore.SDK.LayoutService.Client.Exceptions;
-using Sitecore.AspNetCore.SDK.RenderingEngine.Attributes;
 using Sitecore.AspNetCore.SDK.RenderingEngine.Interfaces;
 
 namespace aspnet_core_demodotcomsite.Controllers;
+
+using aspnet_core_demodotcomsite.Middleware;
 
 public class DefaultController : Controller
 {
@@ -17,7 +18,7 @@ public class DefaultController : Controller
         this.logger = logger;
     }
 
-    [UseSitecoreRendering]
+    [UseEnhancedSitecoreRendering]
     public IActionResult Index(Layout model)
     {
         IActionResult result = Empty;

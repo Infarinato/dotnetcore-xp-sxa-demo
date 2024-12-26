@@ -19,4 +19,6 @@ public class SitecoreSettings
     public string? EditingPath { get; set; }
 
     public Uri? LayoutServiceUri => this.InstanceUri == null ? null : new Uri(this.InstanceUri, this.LayoutServicePath);
+
+    public string? NotFoundPage { get; set; }
 }
