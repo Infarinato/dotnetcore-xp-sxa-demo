@@ -1,20 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sitecore.AspNetCore.SDK.LayoutService.Client.Exceptions;
+
 using Sitecore.AspNetCore.SDK.RenderingEngine.Interfaces;
 
 namespace aspnet_core_demodotcomsite.Controllers;
 
 using aspnet_core_demodotcomsite.Middleware;
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Extensions;
+using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields;
+
 public class DefaultController : Controller
 {
-    private readonly SitecoreSettings? settings;
     private readonly ILogger<DefaultController> logger;
 
     public DefaultController(ILogger<DefaultController> logger, IConfiguration configuration)
     {
-        this.settings = configuration.GetSection(SitecoreSettings.Key).Get<SitecoreSettings>();
-        ArgumentNullException.ThrowIfNull(this.settings);
+        var settings = configuration.GetSection(SitecoreSettings.Key).Get<SitecoreSettings>();
+        ArgumentNullException.ThrowIfNull(settings);
         this.logger = logger;
     }
 
@@ -23,20 +26,26 @@ public class DefaultController : Controller
     {
         IActionResult result = Empty;
         var request = this.HttpContext.GetSitecoreRenderingContext();
-        if ((request?.Response?.HasErrors ?? false) && !this.IsPageEditingRequest(request))
+        if (request?.Response?.HasErrors ?? false)
         {
             foreach (var error in request.Response.Errors)
             {
                 switch (error)
                 {
-                    case ItemNotFoundSitecoreLayoutServiceClientException:
-                        result = this.View("NotFound");
-                        break;
                     default:
                         this.logger.LogError(error, "{Message}", error.Message);
                         throw error;
                 }
             }
+        }
+        else if (!(HttpContext.User.Identity?.IsAuthenticated ?? false) && IsSecurePage(request) && !(request?.Response?.Content?.Sitecore?.Context?.IsEditing ?? false))
+        {
+            AuthenticationProperties properties = new()
+            {
+                RedirectUri = HttpContext.Request.GetEncodedUrl()
+            };
+
+            result = Challenge(properties);
         }
         else
         {
@@ -76,8 +85,14 @@ public class DefaultController : Controller
         return this.View();
     }
 
-    private bool IsPageEditingRequest(ISitecoreRenderingContext request)
+    private static bool IsSecurePage(ISitecoreRenderingContext? request)
     {
-        return request.Controller?.HttpContext.Request.Path == (this.settings?.EditingPath ?? string.Empty);
+        var result = false;
+        if (request?.Response?.Content?.Sitecore?.Route?.Fields.TryGetValue("RequiresAuthentication", out var requiresAuthFieldReader) ?? false)
+        {
+            result = requiresAuthFieldReader.Read<CheckboxField>()?.Value ?? false;
+        }
+
+        return result;
     }
 }
