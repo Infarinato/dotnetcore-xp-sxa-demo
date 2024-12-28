@@ -1,0 +1,33 @@
+﻿@using aspnet_core_demodotcomsite.Models.Feeds
+@model aspnet_core_demodotcomsite.Models.RssFeed
+
+<div class="component promo @Model.Styles @Model.GridParameters" id="@Model.Id">
+    <div class="component-content">
+        <div class="promo-text">
+            @{
+                var variantClass = Model.FieldNames == Promo.VariantWithText ? "promo-text" : string.Empty;
+            }
+            <div>
+                <div class="field-promotext">
+                    @if (Model.FeedItems.Any())
+                    {
+                        <h3><sc-text class="@variantClass" asp-for="@Model.FeedTitle"></sc-text></h3>
+                        <dl>
+                            @foreach (var item in Model.FeedItems)
+                            {
+                                var thumbnailImage = BbcNewsFeed.GetThumbnailImage(item);
+                                <dt style="clear:both; padding-top:.5em">
+                                    <img alt="@item.Title.Text" src="@thumbnailImage.Url" height="@thumbnailImage.Height" width="@thumbnailImage.Width" style="float:left; padding-right:.5em"/>
+                                    <a href="@item.Id">@item.Title.Text</a> (published at @item.PublishDate.DateTime.ToString("HH:mm on dddd, dd/MM/yyyy"))
+                                </dt>
+                                <dd>
+                                    @item.Summary.Text
+                                </dd>
+                            }
+                        </dl>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

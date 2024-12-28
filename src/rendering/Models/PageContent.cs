@@ -11,11 +11,5 @@ public class PageContent : BaseModel
     [SitecoreComponentField(Name = "Content")]
     public RichTextField? ComponentContent { get; set; }
 
-    public RichTextField? Content
-    {
-        get
-        {
-            return ComponentContent ?? RouteContent;
-        }
-    }
+    public RichTextField? Content => this.ComponentContent ?? this.RouteContent;
 }

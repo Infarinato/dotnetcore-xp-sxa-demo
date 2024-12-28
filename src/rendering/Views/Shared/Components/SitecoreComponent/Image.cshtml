@@ -1,9 +1,9 @@
 ﻿@model aspnet_core_demodotcomsite.Models.Image
 
-@if(Model.FieldNames == Image.VARIANT_BANNER)
+@if(Model.FieldNames == Image.VariantBanner)
 {
-    string classHeroBannerEmpty = Model.IsEditing && string.IsNullOrWhiteSpace(Model.ImageField?.Value.Src) ? "hero-banner-empty" : string.Empty;
-    string backgroundStyle = !string.IsNullOrWhiteSpace(Model?.ImageField?.Value.Src) ? $"background-image: url('{@Model.ImageField?.Value.Src}')" : string.Empty;
+    var classHeroBannerEmpty = Model.IsEditing && string.IsNullOrWhiteSpace(Model.ImageField?.Value.Src) ? "hero-banner-empty" : string.Empty;
+    var backgroundStyle = !string.IsNullOrWhiteSpace(Model?.ImageField?.Value.Src) ? $"background-image: url('{Model.ImageField?.Value.Src}')" : string.Empty;
 
     <div class="component hero-banner @Model?.Styles @Model?.GridParameters @classHeroBannerEmpty" id="@Model?.Id">
         <div class="component-content sc-sxa-image-hero-banner" style="@backgroundStyle">

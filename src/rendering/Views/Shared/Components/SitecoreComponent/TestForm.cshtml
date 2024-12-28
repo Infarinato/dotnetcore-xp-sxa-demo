@@ -1,0 +1,30 @@
+﻿@model aspnet_core_demodotcomsite.Models.TestForm
+@using BlazorComponent = aspnet_core_demodotcomsite.Views.Shared.Components.BlazorComponent
+
+@if (Model.IsEditing)
+{
+    <div class="component counter @Model.Styles @Model.GridParameters" id="@Model.Id">
+        <div class="component-content">
+            <div class="row">
+                Date label: <sc-text asp-for="@Model.DateLabel"></sc-text>
+            </div>
+            <div class="row">
+                Entry label: <sc-text asp-for="@Model.EntryLabel"></sc-text>
+            </div>
+            <div class="row">
+                Submitted date heading: <sc-text asp-for="@Model.SubmittedDateHeading"></sc-text>
+            </div>
+            <div class="row">
+                Submitted entry heading: <sc-text asp-for="@Model.SubmittedEntryHeading"></sc-text>
+            </div>
+        </div>
+    </div>
+
+    return;
+}
+
+<div class="component-content">
+    <div class="row">
+        <component type="typeof(BlazorComponent.TestForm)" render-mode="ServerPrerendered" param-SitecoreModel="@Model" />
+    </div>
+</div>

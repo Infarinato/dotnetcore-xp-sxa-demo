@@ -8,19 +8,7 @@ public class LinkList : BaseModel
     [SitecoreComponentField(Name = "data")]
     public DataField? Data { get; set; }
 
-    public TextField? Title
-    {
-        get
-        {
-            return Data?.Datasource?.Field?.Title;
-        }
-    }
+    public TextField? Title => this.Data?.Datasource?.Field?.Title;
 
-    public List<LinkListItem> Children 
-    { 
-        get
-        {
-            return Data?.Datasource?.Children?.Results ?? [];
-        }
-    }
+    public List<LinkListItem> Children => this.Data?.Datasource?.Children?.Results ?? [];
 }

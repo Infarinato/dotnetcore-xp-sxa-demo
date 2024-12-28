@@ -9,8 +9,8 @@ public class Navigation : BaseModel
 
     public Navigation(List<NavigationItem>? navigationItems, int? menuLevel)
     {
-        NavigationItems = navigationItems;
-        MenuLevel = menuLevel;
+        this.NavigationItems = navigationItems;
+        this.MenuLevel = menuLevel;
     }
 
     [SitecoreComponentField(Name = FieldParser.CustomContentFieldKey)]

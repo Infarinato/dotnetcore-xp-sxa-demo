@@ -1,0 +1,27 @@
+﻿@model aspnet_core_demodotcomsite.Models.Counter
+@using BlazorComponent = aspnet_core_demodotcomsite.Views.Shared.Components.BlazorComponent
+
+@if (Model.IsEditing)
+{
+    <div class="component counter @Model.Styles @Model.GridParameters" id="@Model.Id">
+        <div class="component-content">
+            <div class="row">
+                Heading: <sc-text asp-for="@Model.Heading"></sc-text>
+            </div>
+            <div class="row">
+                Counter count label: <sc-text asp-for="@Model.CurrentCountLabel"></sc-text>
+            </div>
+            <div class="row">
+                Submit button label: <sc-text asp-for="@Model.SubmitButtonLabel"></sc-text>
+            </div>
+        </div>
+    </div>
+
+    return;
+}
+
+<div class="component-content">
+    <div class="row">
+        <component type="typeof(BlazorComponent.Counter)" render-mode="ServerPrerendered" param-SitecoreModel="@Model" />
+    </div>
+</div>

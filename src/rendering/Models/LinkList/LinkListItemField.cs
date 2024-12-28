@@ -1,5 +1,5 @@
-﻿using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
+using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields;
 
 namespace aspnet_core_demodotcomsite.Models;
 

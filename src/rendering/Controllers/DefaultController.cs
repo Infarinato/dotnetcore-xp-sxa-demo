@@ -1,58 +1,121 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Sitecore.AspNetCore.SDK.LayoutService.Client.Exceptions;
-using Sitecore.AspNetCore.SDK.RenderingEngine.Attributes;
+﻿namespace aspnet_core_demodotcomsite.Controllers;
+
+using aspnet_core_demodotcomsite.Middleware;
+
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Mvc;
+
+using Sitecore.AspNetCore.SDK.LayoutService.Client.Response;
+using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields;
 using Sitecore.AspNetCore.SDK.RenderingEngine.Interfaces;
-using aspnet_core_demodotcomsite.Models;
 
-namespace aspnet_core_demodotcomsite.Controllers;
+using Sustainsys.Saml2.AspNetCore2;
 
-public class DefaultController : Controller
+public class DefaultController : HccController
 {
-    private readonly SitecoreSettings? _settings;
-    private readonly ILogger<DefaultController> _logger;
+    private readonly ILogger<DefaultController> logger;
 
     public DefaultController(ILogger<DefaultController> logger, IConfiguration configuration)
     {
-        _settings = configuration.GetSection(SitecoreSettings.Key).Get<SitecoreSettings>();
-        ArgumentNullException.ThrowIfNull(_settings);
-        _logger = logger;
+        var settings = configuration.GetSection(SitecoreSettings.Key).Get<SitecoreSettings>();
+        ArgumentNullException.ThrowIfNull(settings);
+        this.logger = logger;
     }
 
-    [UseSitecoreRendering]
+    [UseEnhancedSitecoreRendering]
     public IActionResult Index(Layout model)
     {
         IActionResult result = Empty;
-        ISitecoreRenderingContext? request = HttpContext.GetSitecoreRenderingContext();
-        if ((request?.Response?.HasErrors ?? false) && !IsPageEditingRequest(request))
+        var request = this.HttpContext.GetSitecoreRenderingContext();
+        if (request?.Response?.HasErrors ?? false)
         {
-            foreach (SitecoreLayoutServiceClientException error in request.Response.Errors)
+            foreach (var error in request.Response.Errors)
             {
                 switch (error)
                 {
-                    case ItemNotFoundSitecoreLayoutServiceClientException:
-                        result = View("NotFound");
-                        break;
                     default:
-                        _logger.LogError(error, "{Message}", error.Message);
+                        this.logger.LogError(error, "{Message}", error.Message);
                         throw error;
                 }
             }
         }
+        else if (this.IsAuthenticationRequired(request))
+        {
+            AuthenticationProperties properties = new()
+            {
+                RedirectUri = HttpContext.Request.GetEncodedUrl()
+            };
+
+            result = Challenge(properties, Saml2Defaults.Scheme);
+        }
         else
         {
-            result = View(model);
+            model = GetLayout(model, request);
+            result = this.View(model);
         }
-                
+
         return result;
     }
 
-    public IActionResult Error()
+    private bool IsAuthenticationRequired(ISitecoreRenderingContext? request)
     {
-        return View();
+        return !this.UserIsAuthenticated() && IsSecurePage(request) && !PageIsInEditingOrPreviewMode(request);
     }
 
-    private bool IsPageEditingRequest(ISitecoreRenderingContext request)
+    private static bool IsSecurePage(ISitecoreRenderingContext? request)
     {
-        return request.Controller?.HttpContext.Request.Path == (_settings?.EditingPath ?? string.Empty);
+        var result = false;
+        if (request?.Response?.Content?.Sitecore?.Route?.Fields.TryGetValue("RequiresAuthentication", out var requiresAuthFieldReader) ?? false)
+        {
+            result = requiresAuthFieldReader.Read<CheckboxField>()?.Value ?? false;
+        }
+
+        return result;
+    }
+
+    private static bool PageIsInEditingOrPreviewMode(ISitecoreRenderingContext? request)
+    {
+        return PageIsInEditingMode(request) || PageIsInPreviewMode(request);
+    }
+
+    private static bool PageIsInEditingMode(ISitecoreRenderingContext? request)
+    {
+        return request?.Response?.Content?.Sitecore?.Context?.IsEditing ?? false;
+    }
+
+    private static bool PageIsInPreviewMode(ISitecoreRenderingContext? request)
+    {
+        return request?.Response?.Content?.Sitecore?.Context?.PageState == PageState.Preview;
+    }
+
+    private static Layout GetLayout(Layout model, ISitecoreRenderingContext? request)
+    {
+        if (!string.IsNullOrWhiteSpace(model.ItemId))
+        {
+            return model;
+        }
+
+        var route = request?.Response?.Content?.Sitecore?.Route;
+        if (route == null)
+        {
+            return model;
+        }
+
+        return new Layout
+        {
+            DisplayName = string.IsNullOrWhiteSpace(route.DisplayName) ? route.Name : route.DisplayName,
+            ItemId = route.ItemId,
+            ItemLanguage = route.ItemLanguage,
+            Name = route.Name,
+            TemplateId = route.TemplateId,
+            TemplateName = route.TemplateName
+        };
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return this.View();
     }
 }

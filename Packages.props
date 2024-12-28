@@ -9,9 +9,10 @@
     <Net6x>6.0-*</Net6x>
     <PlatformVersion>10.3.0</PlatformVersion>
     <SitecoreAspNetVersion>21.0.*</SitecoreAspNetVersion>
-	<AspNetCoreSdkVersion>0.0.11</AspNetCoreSdkVersion>
+    <AspNetCoreSdkVersion>0.0.11</AspNetCoreSdkVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Update="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Update="Sitecore.Kernel" Version="$(PlatformVersion)" />
     <PackageReference Update="Sitecore.ContentSearch" Version="$(PlatformVersion)" />
     <PackageReference Update="Sitecore.ContentSearch.Linq" Version="$(PlatformVersion)" />
@@ -27,8 +28,13 @@
     <PackageReference Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="$(Net6x)" />
     <PackageReference Update="Microsoft.Extensions.Http" Version="$(Net6x)" />
     <PackageReference Update="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="$(Net6x)" />
-	<PackageReference Update="Sitecore.AspNetCore.SDK.LayoutService.Client" Version="$(AspNetCoreSdkVersion)" />
-	<PackageReference Update="Sitecore.AspNetCore.SDK.RenderingEngine" Version="$(AspNetCoreSdkVersion)" />
-	<PackageReference Update="Sitecore.AspNetCore.SDK.ExperienceEditor" Version="$(AspNetCoreSdkVersion)" />
+    <PackageReference Update="Sitecore.AspNetCore.SDK.LayoutService.Client" Version="$(AspNetCoreSdkVersion)" />
+    <PackageReference Update="Sitecore.AspNetCore.SDK.RenderingEngine" Version="$(AspNetCoreSdkVersion)" />
+    <PackageReference Update="Sitecore.AspNetCore.SDK.ExperienceEditor" Version="$(AspNetCoreSdkVersion)" />
+    <PackageReference Update="Sustainsys.Saml2.AspNetCore2" Version="2.10.0" />
+    <PackageReference Update="System.Net.Http" Version="4.3.4" />
+    <PackageReference Update="System.Security.Cryptography.Xml" Version="9.0.0" />
+    <PackageReference Update="System.ServiceModel.Syndication" Version="9.0.0" />
+    <PackageReference Update="System.Text.RegularExpressions" Version="4.3.1" />
   </ItemGroup>
 </Project>

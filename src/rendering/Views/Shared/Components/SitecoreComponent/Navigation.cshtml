@@ -1,5 +1,4 @@
-﻿@using aspnet_core_demodotcomsite.Models.Navigation
-@model aspnet_core_demodotcomsite.Models.Navigation.Navigation
+﻿@model aspnet_core_demodotcomsite.Models.Navigation.Navigation
 
 <div class="component navigation @Model.Styles @Model.GridParameters" id="@Model.Id">
     <label class="menu-mobile-navigate-wrapper">
@@ -8,7 +7,7 @@
         <div class="menu-humburger" />
         <div class="component-content">
             <nav>
-                @await Html.PartialAsync("./_NavigationMenu.cshtml", @Model)
+                @await Html.PartialAsync("./_NavigationMenu.cshtml", Model)
             </nav>
         </div>
     </label>
