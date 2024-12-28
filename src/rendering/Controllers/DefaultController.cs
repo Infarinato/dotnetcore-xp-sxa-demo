@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-using Sitecore.AspNetCore.SDK.RenderingEngine.Interfaces;
-
-namespace aspnet_core_demodotcomsite.Controllers;
+﻿namespace aspnet_core_demodotcomsite.Controllers;
 
 using aspnet_core_demodotcomsite.Middleware;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
-using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields;
+using Microsoft.AspNetCore.Mvc;
 
-public class DefaultController : Controller
+using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields;
+using Sitecore.AspNetCore.SDK.RenderingEngine.Interfaces;
+
+using Sustainsys.Saml2.AspNetCore2;
+
+public class DefaultController : HccController
 {
     private readonly ILogger<DefaultController> logger;
 
@@ -38,14 +39,14 @@ public class DefaultController : Controller
                 }
             }
         }
-        else if (!(HttpContext.User.Identity?.IsAuthenticated ?? false) && IsSecurePage(request) && !(request?.Response?.Content?.Sitecore?.Context?.IsEditing ?? false))
+        else if (this.IsAuthenticationRequired(request))
         {
             AuthenticationProperties properties = new()
             {
                 RedirectUri = HttpContext.Request.GetEncodedUrl()
             };
 
-            result = Challenge(properties);
+            result = Challenge(properties, Saml2Defaults.Scheme);
         }
         else
         {
@@ -54,6 +55,27 @@ public class DefaultController : Controller
         }
 
         return result;
+    }
+
+    private bool IsAuthenticationRequired(ISitecoreRenderingContext? request)
+    {
+        return !this.UserIsAuthenticated() && IsSecurePage(request) && !PageIsInEditingMode(request);
+    }
+
+    private static bool IsSecurePage(ISitecoreRenderingContext? request)
+    {
+        var result = false;
+        if (request?.Response?.Content?.Sitecore?.Route?.Fields.TryGetValue("RequiresAuthentication", out var requiresAuthFieldReader) ?? false)
+        {
+            result = requiresAuthFieldReader.Read<CheckboxField>()?.Value ?? false;
+        }
+
+        return result;
+    }
+
+    private static bool PageIsInEditingMode(ISitecoreRenderingContext? request)
+    {
+        return request?.Response?.Content?.Sitecore?.Context?.IsEditing ?? false;
     }
 
     private static Layout GetLayout(Layout model, ISitecoreRenderingContext? request)
@@ -80,19 +102,9 @@ public class DefaultController : Controller
         };
     }
 
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
         return this.View();
-    }
-
-    private static bool IsSecurePage(ISitecoreRenderingContext? request)
-    {
-        var result = false;
-        if (request?.Response?.Content?.Sitecore?.Route?.Fields.TryGetValue("RequiresAuthentication", out var requiresAuthFieldReader) ?? false)
-        {
-            result = requiresAuthFieldReader.Read<CheckboxField>()?.Value ?? false;
-        }
-
-        return result;
     }
 }

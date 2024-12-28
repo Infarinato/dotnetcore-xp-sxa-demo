@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
-using System.Security.Cryptography.X509Certificates;
 
 using aspnet_core_demodotcomsite.Extensions;
+using aspnet_core_demodotcomsite.Helpers;
 
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Localization;
@@ -33,20 +33,26 @@ builder.Services.AddAuthentication(options =>
             options.DefaultChallengeScheme = Saml2Defaults.Scheme;
         })
     .AddCookie()
-    .AddSaml2(opt =>
+    .AddSaml2(options =>
         {
             // Set up our EntityId, this is our application.
-            opt.SPOptions.EntityId = new EntityId("https://headlessdemo.hants.gov.uk");
+            options.SPOptions.EntityId = new EntityId("https://headlessdemo.hants.gov.uk");
 
             // Single logout messages should be signed according to the SAML2 standard, so we need
             // to add a certificate for our app to sign logout messages with to enable logout functionality.
-            //opt.SPOptions.ServiceCertificates.Add(new X509Certificate2("okta.cert"));
+            options.SPOptions.ServiceCertificates.Add(new ServiceCertificate
+            {
+                Certificate = CertificateHelper.GetServiceCertificate("Customers SAML"),
+                Use = CertificateUse.Signing,
+                Status = CertificateStatus.Current,
+                MetadataPublishOverride = MetadataPublishOverrideType.None
+            });
 
             // Add an identity provider.
-            opt.IdentityProviders.Add(new IdentityProvider(
+            options.IdentityProviders.Add(new IdentityProvider(
                                           // The identity provider's entity ID.
                                           new EntityId("http://www.okta.com/exkm1a39rvf16yMyx5d7"),
-                                          opt.SPOptions)
+                                          options.SPOptions)
             {
                 // Load config parameters from metadata
                 MetadataLocation = "https://dev-52855620.okta.com/app/exkm1a39rvf16yMyx5d7/sso/saml/metadata",
@@ -84,16 +90,28 @@ if (sitecoreSettings.EnableEditingMode)
 app.UseRouting();
 app.UseStaticFiles();
 
-const string defaultLanguage = "en";
+const string DefaultLanguage = "en";
 app.UseRequestLocalization(options =>
 {
     // If you add languages in Sitecore which this site / Rendering Host should support, add them here.
-    List<CultureInfo> supportedCultures = [new(defaultLanguage)];
-    options.DefaultRequestCulture = new RequestCulture(defaultLanguage, defaultLanguage);
+    List<CultureInfo> supportedCultures = [new(DefaultLanguage)];
+    options.DefaultRequestCulture = new RequestCulture(DefaultLanguage, DefaultLanguage);
     options.SupportedCultures = supportedCultures;
     options.SupportedUICultures = supportedCultures;
     options.UseSitecoreRequestLocalization();
 });
+
+app.MapControllerRoute(
+    "Saml2SignIn",
+    "user/{action=SignIn}",
+    new { controller = "User", action = "SignIn" }
+    );
+
+app.MapControllerRoute(
+    "Saml2SignOut",
+    "user/{action=SignOut}",
+    new { controller = "User", action = "SignOut" }
+);
 
 app.MapControllerRoute(
         "error",
