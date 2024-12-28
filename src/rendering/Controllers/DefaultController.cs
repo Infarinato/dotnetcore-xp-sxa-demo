@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
+using Sitecore.AspNetCore.SDK.LayoutService.Client.Response;
 using Sitecore.AspNetCore.SDK.LayoutService.Client.Response.Model.Fields;
 using Sitecore.AspNetCore.SDK.RenderingEngine.Interfaces;
 
@@ -59,7 +60,7 @@ public class DefaultController : HccController
 
     private bool IsAuthenticationRequired(ISitecoreRenderingContext? request)
     {
-        return !this.UserIsAuthenticated() && IsSecurePage(request) && !PageIsInEditingMode(request);
+        return !this.UserIsAuthenticated() && IsSecurePage(request) && !PageIsInEditingOrPreviewMode(request);
     }
 
     private static bool IsSecurePage(ISitecoreRenderingContext? request)
@@ -73,9 +74,19 @@ public class DefaultController : HccController
         return result;
     }
 
+    private static bool PageIsInEditingOrPreviewMode(ISitecoreRenderingContext? request)
+    {
+        return PageIsInEditingMode(request) || PageIsInPreviewMode(request);
+    }
+
     private static bool PageIsInEditingMode(ISitecoreRenderingContext? request)
     {
         return request?.Response?.Content?.Sitecore?.Context?.IsEditing ?? false;
+    }
+
+    private static bool PageIsInPreviewMode(ISitecoreRenderingContext? request)
+    {
+        return request?.Response?.Content?.Sitecore?.Context?.PageState == PageState.Preview;
     }
 
     private static Layout GetLayout(Layout model, ISitecoreRenderingContext? request)
