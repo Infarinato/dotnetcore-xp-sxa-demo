@@ -21,4 +21,6 @@ public class Layout
 
     [SitecoreRouteField]
     public string? TemplateName { get; set; }
+
+    public string? VirtualFolder { get; set; }
 }

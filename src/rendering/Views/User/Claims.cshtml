@@ -1,11 +1,21 @@
 ﻿@using System.Security.Claims;
 
-<h1>Claims</h1>
+<h2>User</h2>
+<ul>
+    <li>
+        User is authenticated: @(User.Identity?.IsAuthenticated ?? false)
+    </li>
+    <li>
+        User name: @User.Identity?.Name
+    </li>
+</ul>
+
+<h2>Claims</h2>
 
 <div style="margin:20px">
-@foreach (var claim in (User.Identity as ClaimsIdentity)?.Claims ?? [])
-{
-    <dt title="@claim.Type">@claim.Type</dt>
-    <dd>@claim.Value</dd>
-}
+    @foreach (var claim in (User.Identity as ClaimsIdentity)?.Claims ?? [])
+    {
+        <dt title="@claim.Type">@claim.Type</dt>
+        <dd>@claim.Value</dd>
+    }
 </div>

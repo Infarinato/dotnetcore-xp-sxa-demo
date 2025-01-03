@@ -16,9 +16,11 @@ public class DefaultController : HccController
 {
     private readonly ILogger<DefaultController> logger;
 
+    private readonly SitecoreSettings? settings; 
+
     public DefaultController(ILogger<DefaultController> logger, IConfiguration configuration)
     {
-        var settings = configuration.GetSection(SitecoreSettings.Key).Get<SitecoreSettings>();
+        settings = configuration.GetSection(SitecoreSettings.Key).Get<SitecoreSettings>();
         ArgumentNullException.ThrowIfNull(settings);
         this.logger = logger;
     }
@@ -51,7 +53,7 @@ public class DefaultController : HccController
         }
         else
         {
-            model = GetLayout(model, request);
+            model = GetLayout(model, request, this.settings);
             result = this.View(model);
         }
 
@@ -89,7 +91,7 @@ public class DefaultController : HccController
         return request?.Response?.Content?.Sitecore?.Context?.PageState == PageState.Preview;
     }
 
-    private static Layout GetLayout(Layout model, ISitecoreRenderingContext? request)
+    private static Layout GetLayout(Layout model, ISitecoreRenderingContext? request, SitecoreSettings? sitecoreSettings)
     {
         if (!string.IsNullOrWhiteSpace(model.ItemId))
         {
@@ -109,7 +111,8 @@ public class DefaultController : HccController
             ItemLanguage = route.ItemLanguage,
             Name = route.Name,
             TemplateId = route.TemplateId,
-            TemplateName = route.TemplateName
+            TemplateName = route.TemplateName,
+            VirtualFolder = sitecoreSettings?.VirtualFolder
         };
     }
 
